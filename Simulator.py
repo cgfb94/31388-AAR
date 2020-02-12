@@ -15,7 +15,7 @@ class Simulator():
         now = time.time()
         while time.time() - now < sim_time:
             log_time = time.time() - now
-            x_pos, y_pos, theta_pos = Robot.euler(velocities)
+            x_pos, y_pos, theta_pos = Robot.update_pose(velocities)
             self.pose_history.append([log_time, x_pos, y_pos, theta_pos])
             time.sleep(0.01)
     
@@ -29,7 +29,7 @@ class Simulator():
     def live_sim(self, Robot, velocities, sim_time):
         now = time.time()
         while time.time() - now < sim_time:
-            x_pos, y_pos, _ = Robot.euler(velocities)
+            x_pos, y_pos, _ = Robot.update_pose(velocities)
             self.live_plotter(x_pos, y_pos)
             time.sleep(0.01)
         

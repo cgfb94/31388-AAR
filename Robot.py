@@ -8,9 +8,9 @@ class Robot():
         self.wheel_seperation   = wheel_seperation
         self.wheel_diameter     = wheel_diameter    # array of [r,l] diameters
         self.sample_time        = sample_time
-        self.xi                 = start_pose
+        self.xi                 = start_pose        # pose of robot
 
-    def euler(self, phi_dot):
+    def update_pose(self, phi_dot):
         ''' xi          - pose [x,y,theta] (m,m,rad)
             w_disp      - (m)
             w_diam      - (m)
@@ -42,3 +42,13 @@ class Robot():
 
         xi_dot = np.dot(rotation_inv, rotation_vec)
         return xi_dot
+    
+    def drive(self, distance, speed):
+        start_pose = self.xi    # does it copy or assign?
+        driven_dist = 0
+        phi_dot = []
+        phi_dot[0]  = 2 * speedr / self.wheel_diameter[0]
+        phi_dot[1]  = 2 * speedl / self.wheel_diameter[1]
+        while driven_dist <= distance:
+            new_pose = self.update_pose(phi_dot)
+            driven_dist += np.sqrt(new_pose[0]^2 + new_pose)
