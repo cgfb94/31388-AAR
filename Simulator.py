@@ -1,15 +1,21 @@
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import time
 
 from Robot import Robot
+from Plotter import Plotter
 
 class Simulator():
     def __init__(self):
         self.pose_history   = []
         self.sim_df         = pd.DataFrame()
         self.line1          = []
+        self.sim_plot       = Plotter()
+
+        #self.sim_plot.run_animation()
+
 
     def simulate(self, Robot, velocities, sim_time):
         now = time.time()
@@ -27,14 +33,17 @@ class Simulator():
         plt.show()
 
     def live_sim(self, Robot, velocities, sim_time):
+        
         now = time.time()
         while time.time() - now < sim_time:
-            x_pos, y_pos, _ = Robot.update_pose(velocities)
-            self.live_plotter(x_pos, y_pos)
+            x_pos, y_pos, theta = Robot.update_pose(velocities)
+            #self.live_plotter(x_pos, y_pos, theta)
+            self.sim_plot.update_data(x_pos, y_pos, theta % (2*np.pi), time.time() - now)
             time.sleep(0.01)
+        input('Press ENTER to exit')
         
 
-    def live_plotter(self, x, y, identifier='', sim_time = 0.1):
+    def live_plotter(self, x, y, theta, identifier='', sim_time = 0.1):
         line1 = self.line1
         if line1==[]:
             # this is the call to matplotlib that allows dynamic plotting
@@ -50,6 +59,9 @@ class Simulator():
             self.line1 = [1]
         
         # after the figure, axis, and line are created, we only need to update the y-data
-        self.ax.scatter(x, y)
+        self.ax.scatter(x, y, c='r')
         # this pauses the data so the figure/axis can catch up - the amount of pause can be altered above
         plt.pause(sim_time)
+
+if __name__ == "__main__":
+    pass
