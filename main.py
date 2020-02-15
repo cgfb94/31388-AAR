@@ -7,11 +7,11 @@ from Robot import Robot
 from Simulator import Simulator
 
 def simulator():
-    carla = Robot( 0.26, [0.035, 0.035], 0.01, [0, 0, 0])
     rob_sim = Simulator()
-    rob_sim.live_sim(carla, [0, 5000.86], 12)
-    #rob_sim.simulate(carla, [2.86, -2.86], 2)
-    #print(rob_sim.pose_history)
+    rob_sim.add_robot("carla", 'g', 0.26, [0.035, 0.035], 0.01, [0, 0, 0])
+    rob_sim.add_robot("nikki", 'r', 0.26, [0.035, 0.035], 0.01, [8, 12, -np.pi])
+    rob_sim.add_robot("marc", 'b', 0.26, [0.035, 0.035], 0.01, [-6, -8, np.pi])
+    rob_sim.live_sim(60)
 
 if __name__ == '__main__':
     simulator()
