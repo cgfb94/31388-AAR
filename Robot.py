@@ -5,7 +5,11 @@ import time
 import math as math
 
 class Robot():
-    def __init__(self, name, color, wheel_seperation, wheel_diameter, sample_time = 0.01, start_pose = [0, 0, 0]):
+    '''Robot stores pose and history as well as physical parameters'''
+    def __init__(
+            self, name, color, wheel_seperation, wheel_diameter, 
+            sample_time = 0.01, start_pose = [0, 0, 0]):
+
         self.name               = name 
         self.color              = color
         self.wheel_seperation   = wheel_seperation
@@ -19,20 +23,26 @@ class Robot():
         self.r_speed            = []
 
     def set_commands(self, commands):
+        '''TODO give the robot a sequence of commands to follow'''
         self.commands = commands
 
     def run_mission(self):
+        '''TODO Run the mission given in the commands'''
         for command in self.commands:
             self._run(command)
 
     def _run(self, command):
+        '''TODO run a specific command in the commands'''
         pass
 
     def get_pose(self):
+        '''Returns the current pose (xi)'''
         return self.xi 
 
     def update_pose(self, phi_dot):
-        ''' xi          - pose [x,y,theta] (m,m,rad)
+        ''' Calculate new pose given a wheel speed
+
+            xi          - pose [x,y,theta] (m,m,rad)
             w_disp      - (m)
             w_diam      - (m)
             phi_dot     - angular speed (rad/sec)
@@ -46,14 +56,13 @@ class Robot():
         return xi_new 
 
     def derivative(self, phi_dot):
-        ''' xi          - pose [x,y,theta] (m,m,rad)
-            w_disp      - (m)
-            w_diam      - (m)
+        ''' Find the acceleration of the wheels
+
+            xi          - pose [x,y,theta] (m,m,rad)
             phi_dot     - angular speed [0,1] (rad/s)
         '''
         _, _, theta     = self.xi
         r1, r2          = self.wheel_diameter
-        l               = self.wheel_seperation
 
         rotation = np.array(    [[np.cos(theta), np.sin(theta), 0],
                                 [-np.sin(theta), np.cos(theta), 0],
@@ -67,10 +76,12 @@ class Robot():
                                               r2*phi_dot[1],
                                               0]))
 
-        xi_dot = np.dot(np.dot(rotation_inv, np.linalg.inv(constrains)),input_speed)
+        xi_dot = np.dot(np.dot(rotation_inv, np.linalg.inv(constrains)),
+                                input_speed)
         return xi_dot
     
     def drive(self, distance, speed):
+        '''TODO give the robot drive command'''
         start_pose = self.xi    # does it copy or assign?
         driven_dist = 0
         phi_dot = [0,0]
@@ -81,6 +92,7 @@ class Robot():
             driven_dist += np.sqrt(new_pose[0]**2 + new_pose[1]**2)
 
     def polar_coord(self):
+        '''Returns the polar representation of displacemnt from ideal'''
         delta_x = self.goal_pos[0] - self.xi[0]
         delta_y = self.goal_pos[1] - self.xi[1]
         rho = np.sqrt(delta_x**2+delta_y**2)
@@ -89,6 +101,7 @@ class Robot():
         return (rho, alpha, beta)
 
     def v_w(self):
+        '''TODO Return speeds??'''
         rho, alpha, beta = self.polar_coord()
         kp = 3
         ka = 8
@@ -98,15 +111,20 @@ class Robot():
         return (v,w)
     
     def wheel_speeds(self):
+        '''Convert the linear speeds to radial wheel speeds'''
         v, w = self.v_w()
 
         phi_dot = [0,0]
-        phi_dot[0] = 1 / self.wheel_diameter[0] / 2 * (v + w * self.wheel_seperation / 2)
-        phi_dot[1] = 1 / self.wheel_diameter[1] / 2 * (v - w * self.wheel_seperation / 2)
+        phi_dot[0] = (
+        1 / self.wheel_diameter[0] / 2 * (v + w * self.wheel_seperation / 2))
+
+        phi_dot[1] = (
+        1 / self.wheel_diameter[1]  / 2 * (v - w * self.wheel_seperation / 2))
         
         return phi_dot
 
     def go_to_pose(self, goal_pos):
+        '''Yields the new pose which takes the robot towards goal'''
         self.goal_pos = goal_pos
         while   abs(self.goal_pos[0] - self.xi[0]) > 0.1 or \
                 abs(self.goal_pos[1] - self.xi[1]) > 0.1 or \
@@ -114,3 +132,6 @@ class Robot():
             phi_dot = self.wheel_speeds()
             new_pose = self.update_pose(phi_dot)
             yield new_pose
+
+if __name__ == "__main__":
+    print("Running Robot.py")

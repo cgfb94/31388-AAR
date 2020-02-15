@@ -7,56 +7,60 @@ from Robot import Robot
 from Plotter import Plotter
 
 class Simulator():
+    '''Simulate the movements of robots in arena'''
     def __init__(self):
         self.sim_log        = []
         self.robots         = []
         self.sim_plot       = Plotter()
 
-    def add_robot(self, name, color, wheel_seperation, wheel_diameter, sample_time = 0.01, start_pose = [0, 0, 0]):
-        self.robots.append(Robot(name, color, wheel_seperation, wheel_diameter, sample_time, start_pose))
+    def add_robot(
+        self, name, color, wheel_seperation, 
+        wheel_diameter, sample_time = 0.01, start_pose = [0, 0, 0]):
+        '''Add a robot to be simulated'''
 
-    def simulate(self, sim_time):
-        now = time.time()
-        while time.time() - now < sim_time:
-            log_time = time.time() - now
-            # update pose of each robot individually
-            for robot in self.robots:
-                pass
-        
-            time.sleep(0.01)
+        self.robots.append(Robot(
+            name, color, wheel_seperation, wheel_diameter, 
+            sample_time, start_pose))
 
     def live_sim(self, sim_time):
-        
+        '''Carry out a simulation for a set amount of time and plot'''
+
+        # add the robots in the sim to the plot
         for robot in self.robots:
             self.sim_plot.add_robot(robot)
                   
         now = time.time()
         while time.time() - now < sim_time:
+            # clear the pos_ax to remove previous arrow
             Plotter.pos_ax.cla()
             # iterate through robots in sim, get thier poses
             for robot in self.robots:
                 try:
+                    # this is where we instruct the robot
                     next(robot.go_to_pose([15,15, 1]))
                 except StopIteration:
+                    # if the simulation stops freeze the plot
                     x_pos, y_pos, theta = robot.get_pose()
-                    self.sim_plot.update_data(robot.name, x_pos, y_pos, theta % (2*np.pi), time.time() - now, robot.r_speed[-1], robot.l_speed[-1])
+                    self.sim_plot.update_data(
+                        robot.name, x_pos, y_pos, theta % (2*np.pi), 
+                        time.time() - now, robot.r_speed[-1], 
+                        robot.l_speed[-1])
                     input('Press ENTER to exit')
                     return
+                
                 x_pos, y_pos, theta = robot.get_pose()
-                self.sim_plot.update_data(robot.name, x_pos, y_pos, theta % (2*np.pi), time.time() - now, robot.r_speed[-1], robot.l_speed[-1])
+                self.sim_plot.update_data(
+                    robot.name, x_pos, y_pos, theta % (2*np.pi), 
+                    time.time() - now, robot.r_speed[-1], robot.l_speed[-1])
 
             # draw on the canvas with the updated data    
             self.sim_plot.update_canvas()
             time.sleep(0.01)
+
         # keep the plotting window open until user closes it    
         input('Press ENTER to exit')
         return
-        
-    def go_to_pose(self, robot, goal_pos):
-        robot.goal_pos = goal_pos
-        while   abs(robot.goal_pos[0] - robot.xi[0]) > 0.1 or \
-                abs(robot.goal_pos[1] - robot.xi[1]) > 0.1 or \
-                abs(robot.goal_pos[2] - robot.xi[2]) > 1:
-            phi_dot = robot.wheel_speeds()
-            new_pose = robot.update_pose(phi_dot)
-            yield new_pose
+
+
+if __name__ == "__main__":
+    print("Running Robot.py")
