@@ -25,15 +25,22 @@ class Robot():
 
 
     def set_command(self, func):
+        ''' Set the current comand to a method in the class'''
         self.command = func
 
     def run(self):
-        '''TODO run a specific command in the commands'''
+        '''Runs the first command in the commands then removes it'''
+
+        # check that there are commands left then set it as current command
         if len(self.commands):
             self.set_command(self.commands[0])
+
+        # request the next variable from the command (generator)
         try:
             next(self.command)
             return 
+
+        # catch the end of the generator and move to next command
         except StopIteration:
             if len(self.commands):
                 self.commands.pop(0)
@@ -122,7 +129,7 @@ class Robot():
         return (rho, alpha, beta)
 
     def v_w(self):
-        '''TODO Return speeds??'''
+        ''' Returns the Linear speed (v) and angular speed (w)'''
         rho, alpha, beta = self.polar_coord()
         kp = 3
         ka = 8
@@ -154,7 +161,8 @@ class Robot():
             phi_dot = self.wheel_speeds()
             new_pose = self.update_pose(phi_dot)
 
-            if phi_dot[0]*self.sample_time < 0.5 and phi_dot[1]*self.sample_time < 0.5:
+            if phi_dot[0]*self.sample_time < 0.5 and \
+                phi_dot[1]*self.sample_time < 0.5:
                 break
 
             yield new_pose

@@ -7,6 +7,7 @@ from Simulator import Simulator
 
 def simulator():
     '''Creates a Simulator instance creates robots and runs sim'''
+
     rob_sim = Simulator()
 
     # add carla robot to sim and set mission
@@ -27,6 +28,7 @@ def simulator():
             nikki.forward(1,1)
         ])
 
+    # run the simulation 
     rob_sim.sim_missions(500)
 
 if __name__ == '__main__':

@@ -63,38 +63,12 @@ class Simulator():
         input('Press ENTER to exit')
         return
 
-    def test_sim(self, sim_time):
-        '''Carry out a simulation for a set amount of time and plot'''
-
-        # add the robots in the sim to the plot
-        for _ , robot in self.robots.items():
-            self.sim_plot.add_robot(robot)
-                
-        now = time.time()
-        
-        while time.time() - now < sim_time:
-            # clear the pos_ax to remove previous arrow
-            Plotter.pos_ax.cla()
-            # iterate through robots in sim, get thier poses
-            for _ , robot in self.robots.items():
-                x_pos, y_pos, theta = robot.get_pose()
-                self.sim_plot.update_data(
-                    robot.name, x_pos, y_pos, theta % (2*np.pi), 
-                    time.time() - now, robot.r_speed[-1], robot.l_speed[-1])
-
-            # draw on the canvas with the updated data    
-            self.sim_plot.update_canvas()
-
-        # keep the plotting window open until user closes it    
-        input('Press ENTER to exit')
-        return
-
     def set_commands(self, robot_name, commands):
-        '''TODO give the robot a sequence of commands to follow'''
+        '''Sets the mission of a given robot'''
         self.robots[robot_name].commands = commands
 
     def sim_missions(self, sim_time):
-        '''TODO Run the mission given in the commands'''
+        '''Runs the mission associated with each robot and plots'''
 
         # add the robots in the sim to the plot
         for _ , robot in self.robots.items():
@@ -126,4 +100,4 @@ class Simulator():
 
 
 if __name__ == "__main__":
-    print("Running Robot.py")
+    print("Running Simulator.py")
