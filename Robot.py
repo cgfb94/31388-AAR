@@ -120,6 +120,27 @@ class Robot():
                     
             yield new_pose
 
+    def turn(self, angle, theta_dot):
+        '''Turns the robot around its centre at a given rotational velocity
+            (angle in radian, theta_dot in radian/s)
+            
+            Ex3 - Kinematics - Q10
+        '''
+        prev_pose = self.xi
+
+        turned_angle = 0
+        phi_dot = [0,0]
+        pos_angle_vel = self.wheel_seperation * theta_dot / self.wheel_diameter[0]
+        phi_dot[0] =  pos_angle_vel if angle >= 0 else -pos_angle_vel # right wheel
+        phi_dot[1] = -pos_angle_vel if angle >= 0 else  pos_angle_vel # left wheel
+        
+        while turned_angle < angle if angle >= 0 else turned_angle > angle:
+            new_pose = self.update_pose(phi_dot)
+            turned_angle += new_pose[2] - prev_pose[2]
+            prev_pose = new_pose
+            #print(f"{turned_angle} {angle}")
+            yield new_pose
+
     def polar_coord(self):
         '''Returns the polar representation of displacemnt from ideal'''
         delta_x = self.goal_pos[0] - self.xi[0]
