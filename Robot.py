@@ -15,7 +15,7 @@ class Robot():
         self.wheel_seperation   = wheel_seperation
         self.wheel_diameter     = wheel_diameter    # array of [r,l] diameters
         self.sample_time        = sample_time
-        self.xi                 = start_pose        # pose of robot
+        self.xi                 = start_pose        # pose of robot [x,y,theta]
         self.goal_pos           = 0
         self.pose_history       = [] 
         self.commands           = []
@@ -51,8 +51,9 @@ class Robot():
             else:
                 return
 
-    def get_pose(self):
-        '''Returns the current pose (xi)'''
+    @property
+    def pose(self):
+        '''Returns the current pose (xi) [x, y, theta]'''
         return self.xi 
 
     def update_pose(self, phi_dot):
@@ -100,7 +101,7 @@ class Robot():
         return xi_dot
     
     def forward(self, distance, speed):
-        '''Drives the robot forward at a speed
+        '''Drives the robot forward at a speed for set dist
 
             Ex3 - Kinematics - Q9   
         '''

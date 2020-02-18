@@ -28,7 +28,7 @@ class Simulator():
         '''Carry out a simulation for a set amount of time and plot'''
 
         # add the robots in the sim to the plot
-        for _ , robot in self.robots.items():
+        for robot in self.robots.values():
             self.sim_plot.add_robot(robot)
             robot.set_command(robot.go_to_pose([10,10, 1]))
                   
@@ -37,20 +37,20 @@ class Simulator():
             # clear the pos_ax to remove previous arrow
             Plotter.pos_ax.cla()
             # iterate through robots in sim, get thier poses
-            for _ , robot in self.robots.items():
+            for robot in self.robots.values():
                 try:
                     # this is where we instruct the robot
                     next(robot.command)
                 except StopIteration:
                     # if the simulation stops freeze the plot
-                    x_pos, y_pos, theta = robot.get_pose()
+                    x_pos, y_pos, theta = robot.pose
                     self.sim_plot.update_data(
                         robot.name, x_pos, y_pos, theta % (2*np.pi), 
                         robot.actual_sim_time, robot.r_speed[-1], 
                         robot.l_speed[-1])
                     
                 
-                x_pos, y_pos, theta = robot.get_pose()
+                x_pos, y_pos, theta = robot.pose
                 self.sim_plot.update_data(
                     robot.name, x_pos, y_pos, theta % (2*np.pi), 
                     robot.actual_sim_time, robot.r_speed[-1], robot.l_speed[-1])
@@ -71,7 +71,7 @@ class Simulator():
         '''Runs the mission associated with each robot and plots'''
 
         # add the robots in the sim to the plot
-        for _ , robot in self.robots.items():
+        for robot in self.robots.values():
             self.sim_plot.add_robot(robot)
                 
         now = time.time()
@@ -82,9 +82,9 @@ class Simulator():
             Plotter.pos_ax.grid()
 
             # iterate through robots in sim, get thier poses
-            for _, robot in self.robots.items():
+            for robot in self.robots.values():
                 robot.run()
-                x_pos, y_pos, theta = robot.get_pose()
+                x_pos, y_pos, theta = robot.pose
                 self.sim_plot.update_data(
                     robot.name, x_pos, y_pos, theta % (2*np.pi), 
                     time.time() - now, robot.r_speed[-1], robot.l_speed[-1])

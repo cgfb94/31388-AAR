@@ -20,7 +20,7 @@ class Plotter():
     speed_ax = plt.subplot(221)
     speed_ax.grid()
     speed_ax.set_xlim([0,50])
-    speed_ax.set_ylim([0,20])
+    speed_ax.set_ylim([-10,10])
     speed_ax.set_ylabel("Angular Speed (rad/sec)")
 
     ang_ax = plt.subplot(223)

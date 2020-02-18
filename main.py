@@ -25,10 +25,12 @@ def simulator():
     nikki = rob_sim.robots["nikki"]
     rob_sim.set_commands(
         "nikki", [
-            nikki.forward(1,1)
+            nikki.forward(10,15),
+            nikki.go_to_pose([15,-5,-np.pi]),
+            nikki.forward(5, -25)
         ])
 
-    # run the simulation 
+    # run the simulation with the given missions
     rob_sim.sim_missions(500)
 
 if __name__ == '__main__':
