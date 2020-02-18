@@ -22,18 +22,9 @@ class Robot():
         self.l_speed            = []
         self.r_speed            = []
 
-    def set_commands(self, commands):
-        '''TODO give the robot a sequence of commands to follow'''
-        self.commands = commands
 
-    def run_mission(self):
-        '''TODO Run the mission given in the commands'''
-        for command in self.commands:
-            self._run(command)
-
-    def _run(self, command):
-        '''TODO run a specific command in the commands'''
-        pass
+    def set_command(self, func):
+        self.command = func
 
     def get_pose(self):
         '''Returns the current pose (xi)'''
@@ -41,6 +32,8 @@ class Robot():
 
     def update_pose(self, phi_dot):
         ''' Calculate new pose given a wheel speed
+
+            Ex3 - Kinematics - Q7
 
             xi          - pose [x,y,theta] (m,m,rad)
             w_disp      - (m)
@@ -80,16 +73,25 @@ class Robot():
                                 input_speed)
         return xi_dot
     
-    def drive(self, distance, speed):
-        '''TODO give the robot drive command'''
-        start_pose = self.xi    # does it copy or assign?
+    def forward(self, distance, speed):
+        '''Drives the robot forward at a speed
+
+            Ex3 - Kinematics - Q9   
+        '''
+        start_pose = self.xi    
+
         driven_dist = 0
         phi_dot = [0,0]
-        phi_dot[0]  = 2 * speed / self.wheel_diameter[0]
-        phi_dot[1]  = 2 * speed / self.wheel_diameter[1]
+        phi_dot[0]  = (2 * speed / self.wheel_diameter[0]) 
+        phi_dot[1]  = (2 * speed / self.wheel_diameter[1]) 
+        
         while driven_dist <= distance:
             new_pose = self.update_pose(phi_dot)
-            driven_dist += np.sqrt(new_pose[0]**2 + new_pose[1]**2)
+            driven_dist += (np.sqrt(
+                            (new_pose[0] - start_pose[0])**2 + (
+                                new_pose[1] - start_pose[1])**2)) 
+                    
+            yield new_pose
 
     def polar_coord(self):
         '''Returns the polar representation of displacemnt from ideal'''
@@ -126,6 +128,7 @@ class Robot():
     def go_to_pose(self, goal_pos):
         '''Yields the new pose which takes the robot towards goal'''
         self.goal_pos = goal_pos
+
         while   abs(self.goal_pos[0] - self.xi[0]) > 0.1 or \
                 abs(self.goal_pos[1] - self.xi[1]) > 0.1 or \
                 abs(self.goal_pos[2] - self.xi[2]) > 1:
