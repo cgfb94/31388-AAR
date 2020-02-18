@@ -62,50 +62,31 @@ class Simulator():
         input('Press ENTER to exit')
         return
 
-    def test_sim(self, sim_time):
-            '''Carry out a simulation for a set amount of time and plot'''
+    # def test_sim(self, sim_time):
+    #     '''Carry out a simulation for a set amount of time and plot'''
 
-            # add the robots in the sim to the plot
-            for _ , robot in self.robots.items():
-                self.sim_plot.add_robot(robot)
-                    
-            now = time.time()
-            
-            while time.time() - now < sim_time:
-                # clear the pos_ax to remove previous arrow
-                Plotter.pos_ax.cla()
-                # iterate through robots in sim, get thier poses
-                for _ , robot in self.robots.items():
-                    x_pos, y_pos, theta = robot.get_pose()
-                    self.sim_plot.update_data(
-                        robot.name, x_pos, y_pos, theta % (2*np.pi), 
-                        time.time() - now, robot.r_speed[-1], robot.l_speed[-1])
+    #     # add the robots in the sim to the plot
+    #     for _ , robot in self.robots.items():
+    #         self.sim_plot.add_robot(robot)
+                
+    #     now = time.time()
+        
+    #     while time.time() - now < sim_time:
+    #         # clear the pos_ax to remove previous arrow
+    #         Plotter.pos_ax.cla()
+    #         # iterate through robots in sim, get thier poses
+    #         for _ , robot in self.robots.items():
+    #             x_pos, y_pos, theta = robot.get_pose()
+    #             self.sim_plot.update_data(
+    #                 robot.name, x_pos, y_pos, theta % (2*np.pi), 
+    #                 time.time() - now, robot.r_speed[-1], robot.l_speed[-1])
 
-                # draw on the canvas with the updated data    
-                self.sim_plot.update_canvas()
+    #         # draw on the canvas with the updated data    
+    #         self.sim_plot.update_canvas()
 
-            # keep the plotting window open until user closes it    
-            input('Press ENTER to exit')
-            return
-
-    def set_commands(self, robot_name, commands):
-    '''TODO give the robot a sequence of commands to follow'''
-        self.commands = commands
-
-    def run_mission(self):
-        '''TODO Run the mission given in the commands'''
-        for command in self.commands:
-            self.command = command
-            self._run()
-
-    def _run(self):
-        '''TODO run a specific command in the commands'''
-        while True:
-            try:
-                next(self.command)
-                time.sleep(self.sample_time)
-            except StopIteration:
-                return
+    #     # keep the plotting window open until user closes it    
+    #     input('Press ENTER to exit')
+    #     return
 
 
 if __name__ == "__main__":
