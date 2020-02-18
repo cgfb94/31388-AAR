@@ -18,13 +18,31 @@ class Robot():
         self.xi                 = start_pose        # pose of robot
         self.goal_pos           = 0
         self.pose_history       = [] 
-        self.command_list       = []
+        self.commands           = []
         self.l_speed            = []
         self.r_speed            = []
+        self.actual_sim_time    = 0.0
 
 
     def set_command(self, func):
         self.command = func
+
+    def run(self):
+        '''TODO run a specific command in the commands'''
+        if len(self.commands):
+            self.set_command(self.commands[0])
+        try:
+            next(self.command)
+            return 
+        except StopIteration:
+            if len(self.commands):
+                self.commands.pop(0)
+                if len(self.commands):
+                    self.command = self.commands[0]
+                else:
+                    return
+            else:
+                return
 
     def get_pose(self):
         '''Returns the current pose (xi)'''
@@ -46,6 +64,7 @@ class Robot():
         self.pose_history.append(xi_new)
         self.r_speed.append(phi_dot[0]*self.sample_time)
         self.l_speed.append(phi_dot[1]*self.sample_time)
+        self.actual_sim_time += self.sample_time
         return xi_new 
 
     def derivative(self, phi_dot):
@@ -87,7 +106,7 @@ class Robot():
         
         while driven_dist <= distance:
             new_pose = self.update_pose(phi_dot)
-            driven_dist += (np.sqrt(
+            driven_dist = (np.sqrt(
                             (new_pose[0] - start_pose[0])**2 + (
                                 new_pose[1] - start_pose[1])**2)) 
                     
@@ -129,11 +148,15 @@ class Robot():
         '''Yields the new pose which takes the robot towards goal'''
         self.goal_pos = goal_pos
 
-        while   abs(self.goal_pos[0] - self.xi[0]) > 0.1 or \
-                abs(self.goal_pos[1] - self.xi[1]) > 0.1 or \
+        while   abs(self.goal_pos[0] - self.xi[0]) > 1 or \
+                abs(self.goal_pos[1] - self.xi[1]) > 1 or \
                 abs(self.goal_pos[2] - self.xi[2]) > 1:
             phi_dot = self.wheel_speeds()
             new_pose = self.update_pose(phi_dot)
+
+            if phi_dot[0]*self.sample_time < 0.5 and phi_dot[1]*self.sample_time < 0.5:
+                break
+
             yield new_pose
 
 if __name__ == "__main__":
