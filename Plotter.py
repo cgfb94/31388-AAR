@@ -49,11 +49,11 @@ class Plotter():
 
         # reset pos axis to remove the arrows from the previous frames
         robot_data.robot_pos, = self.pos_ax.plot(
-            [], [], robot_data.color, lw=2)
-        robot_data.robot_star, = self.pos_ax.plot(
-            [], [], robot_data.color + "*")
-        Plotter.pos_ax.set_xlim([-20,20])
-        Plotter.pos_ax.set_ylim([-20,20])
+            [], [], color = robot_data.color, lw=2)
+        # robot_data.robot_star, = self.pos_ax.plot(
+        #     [], [], color = robot_data.color + "*")
+        Plotter.pos_ax.set_xlim([-1,1])
+        Plotter.pos_ax.set_ylim([-1,1])
         Plotter.pos_ax.grid()
 
         # draw an arrow on the canvas and set the angle to the pose angle
@@ -67,8 +67,8 @@ class Plotter():
 
         # plot the last 100 position points
         robot_data.robot_pos.set_data(
-            robot_data.x_pos[-100:], 
-            robot_data.y_pos[-100:])
+            robot_data.x_pos, 
+            robot_data.y_pos)
         robot_data.robot_star.set_data(x, y)
 
         # pose angle vs time
@@ -109,11 +109,15 @@ class Robot_Data():
 
         # create lines for the storage of data to be plotted on the 
         # global axes
-        self.robot_pos, = Plotter.pos_ax.plot([], [], color + '-', lw=2)
+        self.robot_pos, = Plotter.pos_ax.plot([], [], color=color, 
+                                                    linestyle = "solid", lw=2)
         self.robot_star, = Plotter.pos_ax.plot([], [], 'g*')
-        self.robot_angle, = Plotter.ang_ax.plot([], [], color + "-")
-        self.robot_l_speed, = Plotter.speed_ax.plot([], [], color + "--")
-        self.robot_r_speed, = Plotter.speed_ax.plot([], [], color + ".-")
+        self.robot_angle, = Plotter.ang_ax.plot([], [], color=color, 
+                                                    linestyle = "-")
+        self.robot_l_speed, = Plotter.speed_ax.plot([], [], color=color, 
+                                                        linestyle = "--")
+        self.robot_r_speed, = Plotter.speed_ax.plot([], [], color=color, 
+                                                        linestyle = "-.")
         self.sim_time = [0]
 
     def update(self, x , y, theta, time, r_speed, l_speed):
