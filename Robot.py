@@ -120,7 +120,7 @@ class Robot():
                     
             yield new_pose
 
-    def turn(self, angle, theta_dot):
+    def turn(self, angle, theta_dot = 3):
         '''Turns the robot around its centre at a given rotational velocity
             (angle in radian, theta_dot in radian/s)
             
@@ -173,6 +173,35 @@ class Robot():
         
         return phi_dot
 
+    def go_to_pose_v1(self, rel_goal_pose):
+        '''
+            Goal position relative to the current position
+            Ex4 - Motion Control - Q1
+        '''
+        direction = math.atan2(rel_goal_pose[1], rel_goal_pose[0])
+
+        initial_turn = (direction - self.xi[2]) % (2*np.pi)
+        if initial_turn > np.pi:
+            initial_turn = initial_turn - 2*np.pi
+        
+        final_turn = (self.xi[2] + rel_goal_pose[2] - direction) % (2*np.pi)
+        if final_turn > np.pi:
+            final_turn = final_turn - 2*np.pi
+
+        distance = math.sqrt(rel_goal_pose[0] ** 2 + rel_goal_pose[1] ** 2)
+
+        print(f'Distance: {distance}')
+        print(f'Direction: {direction}')
+        print(f'Initial turn: {initial_turn}')
+        print(f'Final turn: {final_turn}')
+
+        self.l_speed.insert(0, 0.0)
+        self.r_speed.insert(0, 0.0)
+
+        self.commands.insert(0, self.turn(final_turn))
+        self.commands.insert(0, self.forward(distance, 10))
+        self.commands.insert(0, self.turn(initial_turn))
+        
     def go_to_pose(self, goal_pos):
         '''Yields the new pose which takes the robot towards goal'''
         self.goal_pos = goal_pos
