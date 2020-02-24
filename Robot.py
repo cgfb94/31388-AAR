@@ -206,14 +206,15 @@ class Robot():
         '''Yields the new pose which takes the robot towards goal'''
         self.goal_pos = goal_pos
 
-        while   abs(self.goal_pos[0] - self.xi[0]) > 1 or \
-                abs(self.goal_pos[1] - self.xi[1]) > 1 or \
-                abs(self.goal_pos[2] - self.xi[2]) > 1:
+        while   abs(self.goal_pos[0] - self.xi[0]) > 0.01 or \
+                abs(self.goal_pos[1] - self.xi[1]) > 0.01 or \
+                abs(self.goal_pos[2] - self.xi[2]) > 0.02:
+
             phi_dot = self.wheel_speeds()
             new_pose = self.update_pose(phi_dot)
 
-            if phi_dot[0]*self.sample_time < 0.5 and \
-                phi_dot[1]*self.sample_time < 0.5:
+            if phi_dot[0]*self.sample_time < 0.005 and \
+                phi_dot[1]*self.sample_time < 0.005:
                 break
 
             yield new_pose
