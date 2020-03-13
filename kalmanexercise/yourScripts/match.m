@@ -24,33 +24,39 @@ function [ matchResult ] = match( pose, poseCov, worldLines, laserLines )
     % the extracted lines, they are read globally.
     global varAlpha varR
     
-    NoM = 0;
+    NoM = 1;
+    % matlab is lame
+    display(worldLines);
+    display(laserLines);
     
     distances = zeros(size(worldLines, 2), size(laserLines, 2));
     
     res = zeros(5, size(worldLines, 2));
-    
+    matchResult = zeros(5, size(worldLines, 2));
+
     sigmaR = diag([varAlpha, varR]);
     
     for i = 1:size(worldLines, 2)
         [projectedLine, lineCov] = projectToLaser(worldLines(:,i), pose, poseCov);
+        display(projectedLine);
         H = [0 0 -1; -cos(worldLines(1,i)) -sin(worldLines(1,i)) 0];
-        for j = 1:length(laserLines)
-            innovation = projectedLine - laserLines(j);
+        for j = 1:size(laserLines, 2)
+            innovation = projectedLine' - laserLines(:,j);
+            display(innovation);
             sigma_innovation = H*poseCov*H' + sigmaR;
-            distances(i,j) = innovation*inv(sigma_innovation)*innovation';
-            if innovation*inv(sigma_innovation)*innovation' <= 4
-                NoM = NoM + 1;
+            distances(i,j) = innovation'*inv(sigma_innovation)*innovation;
+            if innovation'*inv(sigma_innovation)*innovation <= 4
                 res(1,NoM) = worldLines(1,i);
                 res(2,NoM) = worldLines(2,i);
                 res(3,NoM) = innovation(1);
                 res(4,NoM) = innovation(2);
                 res(5,NoM) = j;
+                NoM = NoM + 1;
             end
         end
     end
-    display(size(worldLines, 2));
-    display(NoM);
-    matchResult = res(:,NoM);
+    display(distances);
+    matchResult = res(:,1:NoM-1);
+    display(matchResult);
     
 end

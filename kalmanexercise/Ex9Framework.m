@@ -119,7 +119,7 @@ for iter = 1:noOfIter
         hold off
         pause
             
-        matchResult = match(pose, poseCov,worldLines, laserLines);
+        matchResult = match(pose, poseCov, worldLines, laserLines);
         noOfPairs = sum(matchResult(5,:)>0);
 
         if(plotMatchedLines)
