@@ -47,7 +47,7 @@ plotExtractedLines = true;
 plotLineParameters = false;
 
 plotMatchedLines = false;
-plotAfterMeasurementUpdate = false;
+plotAfterMeasurementUpdate = true;
 
 
 %% RANSAC constants

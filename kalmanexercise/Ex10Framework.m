@@ -32,6 +32,9 @@ else
     odoPose = getPose(mrcSck,'abs')';
 end
     
+N = 0;
+Nmax = 1;
+
 %Generate the arrays for logging
 poses = zeros(3,noOfIter+1);
 poseCovs = cell(1,noOfIter+1);
@@ -76,7 +79,7 @@ for iter = 1:noOfIter+1
     title('Pure odometry')
     pause(0.01)
     
-    if(iter == noOfIter+1)
+    if(iter == noOfIter+1 || N == Nmax)
         break
     end
 

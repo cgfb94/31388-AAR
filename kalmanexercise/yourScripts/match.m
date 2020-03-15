@@ -41,7 +41,7 @@ function [ matchResult ] = match( pose, poseCov, worldLines, laserLines )
         display(projectedLine);
         H = [0 0 -1; -cos(worldLines(1,i)) -sin(worldLines(1,i)) 0];
         for j = 1:size(laserLines, 2)
-            innovation = projectedLine' - laserLines(:,j);
+            innovation = laserLines(:,j) - projectedLine';
             display(innovation);
             sigma_innovation = H*poseCov*H' + sigmaR;
             distances(i,j) = innovation'*inv(sigma_innovation)*innovation;

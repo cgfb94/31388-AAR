@@ -4,5 +4,7 @@ function odoTargetPose = trans(transform,targetPose)
 % coordinates, using the origo of the odometry coordinates in world
 % coordinates (transform).
 
-    odoTargetPose = [0;0;0];
+    rot_matrix = [cos(transform(3)) -sin(transform(3)); sin(transform(3)) cos(transform(3))];
+
+    odoTargetPose = [rot_matrix*targetPose(1:2) + transform(1:2); targetPose(3) + transform(3)];
 end

@@ -25,7 +25,33 @@ function [ poseOut, poseCovOut ] = measurementUpdate( poseIn, poseCovIn, matchRe
     % the extracted lines, they are also read globally
     global lsrRelPose varAlpha varR
 
-    poseOut = poseIn;
-    poseCovOut = poseCovIn;
+    NrLines = size(matchResult,2)
+    noise = zeros(2*NrLines,2*NrLines);
+    NablaH = zeros(2*NrLines,3);
+    vt = zeros(2*NrLines,1);
+    
+    j = 0;
+    for i = 1:(2*NrLines)
+        if(mod(i,2) == 1)
+            j = j+1;
+            noise(i,i) = varAlpha;
+            noise(i+1,i+1) = varR;
+            
+            NablaHtemp = [0 0 -1; -cos(matchResult(1,j)) -sin(matchResult(1,j)) 0];
+            NablaH(i,:) = NablaHtemp(1,:);
+            NablaH(i+1,:) = NablaHtemp(2,:);
+            
+            vt(i) = matchResult(3,j);
+            vt(i+1) = matchResult(4,j);
+            
+        end
+    end
+        
+    SigmaIN = NablaH * poseCovIn * NablaH' + noise;
+    
+    Kt = poseCovIn * NablaH' * inv(SigmaIN);
+    
+    poseOut = poseIn + Kt*vt;
+    poseCovOut = poseCovIn - Kt * SigmaIN * Kt';
 
 end

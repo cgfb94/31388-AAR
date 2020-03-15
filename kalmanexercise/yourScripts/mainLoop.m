@@ -20,9 +20,19 @@ matchPose = pose; %Recording the pose during mathing for plotting purposes
 % Move a bit
 
 % Find the next waypoint in world coordinates and put it in targetPose
-targetPose = [0; 0; 0];
-
-
+if norm(pose - [-squareWidth/2+0.1;-squareWidth/2+0.1;0]) < 0.1
+    targetPose = [0.5; 0.5; pi];
+elseif norm(pose - [0.5; 0.5; pi]) < 0.1
+    targetPose = [-0.5; 0.5; -pi/2];
+elseif norm(pose - [-0.5; 0.5; -pi/2]) < 0.1
+    targetPose = [-0.5; -0.5; 0];
+elseif norm(pose - [-0.5; -0.5; 0]) < 0.1
+    targetPose = [0.5; -0.5; pi/2];
+elseif norm(pose - [0.5; -0.5; pi/2]) < 0.1
+    targetPose = [0.5; 0.5; pi];
+    N = N+1;
+end
+    
 %Find the transformation from the estimated world coordinates to the 
 %odometry coordinates
 transform = findTransform(odoPose, pose);
