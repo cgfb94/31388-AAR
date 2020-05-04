@@ -37,9 +37,12 @@ function [ poseOut, poseCovOut ] = measurementUpdate( poseIn, poseCovIn, matchRe
             noise(i,i) = varAlpha;
             noise(i+1,i+1) = varR;
             
-            NablaHtemp = [0 0 -1; -cos(matchResult(1,j)) -sin(matchResult(1,j)) 0];
-            NablaH(i,:) = NablaHtemp(1,:);
-            NablaH(i+1,:) = NablaHtemp(2,:);
+            %NablaHtemp = [0 0 -1; -cos(matchResult(1,j)) -sin(matchResult(1,j)) 0];
+            %NablaHtemp = [0, 0, -1; -cos(matchResult(1,j)), -sin(matchResult(1,j)), 0.28*(cos(matchResult(1,j))*sin(poseIn(3))-sin(matchResult(1,j))*cos(poseIn(3)))];
+            NablaH(i,:) = [0, 0, -1];
+            NablaH(i+1,:) = [-cos(matchResult(1,j)), -sin(matchResult(1,j)),...
+                0.28*(cos(matchResult(1,j))*sin(poseIn(3))...
+                    -sin(matchResult(1,j))*cos(poseIn(3)))];
             
             vt(i) = matchResult(3,j);
             vt(i+1) = matchResult(4,j);

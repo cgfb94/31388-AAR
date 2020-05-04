@@ -1,4 +1,4 @@
-function [ projectedLine, lineCov ] = projectToLaser( worldLine,poseIn,covIn)
+function [ projectedLine, lineCov ] = projectToLaser(worldLine,poseIn,covIn)
 %[projectedLine, lineCov] = PROJECTTOLASER(worldLine,poseIn,covIn) 
 %Project a word line to the laser scanner frame given the
 %world line, the robot pose and robot pose covariance. Note that the laser
@@ -30,11 +30,13 @@ else
     projectedLineAngle = worldLine(1) - laserPose(3);
 end
 
-projectedLine = [projectedLineAngle, worldLine(2) - laserPose(1)*cos(worldLine(1)) - laserPose(2)*sin(worldLine(1))];
+%projectedLine = [projectedLineAngle, worldLine(2) - laserPose(1)*cos(worldLine(1)) - laserPose(2)*sin(worldLine(1))];
+projectedLine = [projectedLineAngle, worldLine(2) - (laserPose(1)+0.28*cos(laserPose(3))*cos(worldLine(1)) - (laserPose(2)+0.28*sin(laserPose(3))*sin(worldLine(1))];
 
-H = [0 0 -1; -cos(worldLine(1)) -sin(worldLine(1)) 0];
+%H = [0 0 -1; -cos(worldLine(1)) -sin(worldLine(1)) 0];
+H = [0, 0, -1; -cos(worldLine(1)), -sin(worldLine(1)), 0.28*cos(worldLine(1))*sin(poseIn(3))-0.28*sin(worldLine(1))*cos(poseIn(3))];
 
-lineCov = H * covIn * H';
+%lineCov = H * covIn * H';
 
-%lineCov = lineCov(worldLine, poseIn, covIn);
+lineCov = lineCov(worldLine, poseIn, covIn);
 end
